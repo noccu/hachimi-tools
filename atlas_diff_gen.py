@@ -14,7 +14,7 @@ def main():
     (meta_path, atlas_dir) = argv[1:]
     atlas_dir = Path(atlas_dir)
 
-    meta = MetaDb(sqlite3.connect(meta_path))
+    meta = MetaDb(meta_path)
     ignore_list = load_ignore_list(atlas_dir)
 
     for child in atlas_dir.iterdir():

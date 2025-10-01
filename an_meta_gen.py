@@ -7,8 +7,8 @@ from meta_db_lib import MetaDb
 def main():
     (windows_meta, android_meta, ld_assets_dir) = argv[1:]
 
-    windows_meta = MetaDb(sqlite3.connect(windows_meta))
-    android_meta = MetaDb(sqlite3.connect(android_meta))
+    windows_meta = MetaDb(windows_meta)
+    android_meta = MetaDb(android_meta)
     ld_assets_dir = Path(ld_assets_dir)
     an_dir = ld_assets_dir / "an_texture_sets"
 

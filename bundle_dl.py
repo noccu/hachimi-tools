@@ -7,7 +7,7 @@ from meta_db_lib import MetaDb
 def main():
     (output_dir, meta_path, bundle_name) = argv[1:]
 
-    meta = MetaDb(sqlite3.connect(meta_path))
+    meta = MetaDb(meta_path)
 
     asset_hash = meta.get_asset_hash(bundle_name)
     print(asset_hash)

@@ -2,7 +2,6 @@ from pathlib import Path
 from unitypy_utils import *
 import json
 from sys import argv
-import sqlite3
 import requests
 import UnityPy
 from PIL import Image
@@ -14,7 +13,7 @@ def main():
     (meta_path, an_dir) = argv[1:]
     an_dir = Path(an_dir)
 
-    meta = MetaDb(sqlite3.connect(meta_path))
+    meta = MetaDb(meta_path)
     ignore_list = load_ignore_list(an_dir)
 
     for child in an_dir.iterdir():

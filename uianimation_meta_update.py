@@ -7,8 +7,8 @@ from meta_db_lib import MetaDb
 def main():
     (windows_meta, android_meta, anim_dir) = argv[1:]
 
-    windows_meta = MetaDb(sqlite3.connect(windows_meta))
-    android_meta = MetaDb(sqlite3.connect(android_meta))
+    windows_meta = MetaDb(windows_meta)
+    android_meta = MetaDb(android_meta)
     anim_dir = Path(anim_dir)
 
     for meta_path in anim_dir.rglob("*.json"):

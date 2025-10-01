@@ -7,8 +7,8 @@ from meta_db_lib import MetaDb
 def main():
     (windows_meta, android_meta, atlas_dir) = argv[1:]
 
-    windows_meta = MetaDb(sqlite3.connect(windows_meta))
-    android_meta = MetaDb(sqlite3.connect(android_meta))
+    windows_meta = MetaDb(windows_meta)
+    android_meta = MetaDb(android_meta)
 
     for child in Path(atlas_dir).iterdir():
         if child.is_dir():

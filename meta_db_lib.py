@@ -1,6 +1,13 @@
+import apsw
+
+DB_KEY = "9c2bab97bcf8c0c4f1a9ea7881a213f6c9ebf9d8d4c6a8e43ce5a259bde7e9fd"
+
+
 class MetaDb:
-    def __init__(self, conn):
-        self.cur = conn.cursor()
+    def __init__(self, path):
+        uri = f"file:{str(path)}?hexkey={DB_KEY}"
+        self.db = apsw.Connection(uri, apsw.SQLITE_OPEN_URI | apsw.SQLITE_OPEN_READONLY)
+        self.cur = self.db.cursor()
 
         res = self.cur.execute("SELECT n FROM c WHERE n = '//Android' OR n = '//Windows'")
         self.platform = res.fetchone()[0][2:]
