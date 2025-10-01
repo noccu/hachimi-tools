@@ -1,5 +1,6 @@
 from PIL import Image
 import os
+import math
 
 def rgb_to_lab(r, g, b):
     # Convert RGB (0-255) to XYZ
