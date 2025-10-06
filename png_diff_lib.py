@@ -59,9 +59,9 @@ def rgba_difference(color1, color2, alpha_weight=1.0):
 
     return total_difference
 
-def is_pixel_similar(old_pixel, new_pixel):
-    if os.environ.get('PNG_DIFF_FUZZY'):
-        return rgba_difference(old_pixel, new_pixel, 4.0) < 8.0
+def is_pixel_similar(old_pixel, new_pixel, fuzzy_tresh=0):
+    if fuzzy_tresh > 0:
+        return rgba_difference(old_pixel, new_pixel, 4.0) < fuzzy_tresh
     else:
         return old_pixel == new_pixel
 
@@ -77,11 +77,21 @@ def png_diff(old_img, new_img):
 
     out_img = Image.new("RGBA", (width, height), None)
     out_pixels = out_img.load()
+
+    fuzzy_tresh = os.environ.get('PNG_DIFF_FUZZY', 0)
+    if fuzzy_tresh:
+        try:
+            fuzzy_tresh = float(fuzzy_tresh)
+            print(f"[PNG] Using fuzzy threshold: {fuzzy_tresh}")
+        except ValueError:
+            fuzzy_tresh = 8.0
+            print(f"[PNG] Using fuzzy threshold: {fuzzy_tresh} (default)")
+
     for x in range(width):
         for y in range(height):
             old_pixel = old_pixels[x,y]
             new_pixel = new_pixels[x,y]
-            if not is_pixel_similar(old_pixel, new_pixel):
+            if not is_pixel_similar(old_pixel, new_pixel, fuzzy_tresh):
                 if new_pixel[3] == 0 and old_pixel[3] != 0:
                     new_pixel = (255, 0, 255, 255)
                 elif new_pixel == (255, 0, 255, 255):
