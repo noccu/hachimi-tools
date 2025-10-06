@@ -2,7 +2,7 @@ from pathlib import Path
 from unitypy_utils import *
 import json
 from sys import argv
-import sqlite3
+from const import GAME_META_FILE
 import requests
 import UnityPy
 from PIL import Image
@@ -11,14 +11,16 @@ from png_diff_lib import png_diff
 from utils import load_ignore_list
 
 def main():
-    (meta_path, atlas_dir) = argv[1:]
+    (atlas_dir, *target_dirs) = argv[1:]
     atlas_dir = Path(atlas_dir)
 
-    meta = MetaDb(meta_path)
+    meta = MetaDb(GAME_META_FILE)
     ignore_list = load_ignore_list(atlas_dir)
 
     for child in atlas_dir.iterdir():
         if child.is_dir():
+            if len(target_dirs) and child.name not in target_dirs:
+                continue
             texture_path = child / (child.name + ".png")
             if "/".join(texture_path.parts[-2:]) in ignore_list:
                 continue

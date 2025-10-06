@@ -8,16 +8,20 @@ from PIL import Image
 from meta_db_lib import MetaDb
 from png_diff_lib import png_diff
 from utils import load_ignore_list
+from const import GAME_META_FILE
+
 
 def main():
-    (meta_path, an_dir) = argv[1:]
+    (an_dir, *target_dirs) = argv[1:]
     an_dir = Path(an_dir)
 
-    meta = MetaDb(meta_path)
+    meta = MetaDb(GAME_META_FILE)
     ignore_list = load_ignore_list(an_dir)
 
     for child in an_dir.iterdir():
         if child.is_dir() and child.name.startswith("as_uMeshParam_fl_"):
+            if len(target_dirs) and child.name not in target_dirs:
+                continue
             png_files = list(child.glob("*.png"))
             if len(png_files) == 0 or all(path.name.endswith(".diff.png") for path in png_files):
                 continue
