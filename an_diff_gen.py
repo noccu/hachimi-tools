@@ -1,6 +1,5 @@
 from pathlib import Path
 from unitypy_utils import *
-import json
 from sys import argv
 import requests
 import UnityPy
@@ -8,6 +7,7 @@ from PIL import Image
 from meta_db_lib import MetaDb
 from png_diff_lib import png_diff
 from utils import load_ignore_list
+from decrypt import decrypt_asset_bundle
 from const import GAME_META_FILE
 
 
@@ -38,11 +38,17 @@ def main():
 
             print("Bundle: " + asset_name)
 
-            bundle_url = meta.get_asset_bundle_url(asset_hash)
-            bundle_res = requests.get(bundle_url)
-            status = bundle_res.status_code
+            bundle_path = meta.get_asset_bundle_path(asset_hash)
+            if bundle_path.is_file():
+                bundle_data = bundle_path.read_bytes()
+                status = 200
+            else:
+                bundle_url = meta.get_asset_bundle_url(asset_hash)
+                bundle_res = requests.get(bundle_url)
+                bundle_data = bundle_res.content
+                status = bundle_res.status_code
             if status == 200:
-                env = UnityPy.load(bundle_res.content)
+                env = UnityPy.load(decrypt_asset_bundle(bundle_data, asset_key))
                 for texture_path in png_files:
                     if texture_path.name.endswith(".diff.png") or "/".join(texture_path.parts[-2:]) in ignore_list:
                         continue

@@ -1,4 +1,5 @@
 import apsw
+from const import GAME_ASSET_ROOT
 
 DB_KEY = "9c2bab97bcf8c0c4f1a9ea7881a213f6c9ebf9d8d4c6a8e43ce5a259bde7e9fd"
 
@@ -19,6 +20,9 @@ class MetaDb:
     URL_FORMAT = "https://prd-storage-game-umamusume.akamaized.net/dl/resources/{}/assetbundles/{}/{}"
     def get_asset_bundle_url(self, asset_hash):
         return self.URL_FORMAT.format(self.platform, asset_hash[0:2], asset_hash)
+
+    def get_asset_bundle_path(self, asset_hash):
+        return GAME_ASSET_ROOT.joinpath(asset_hash[0:2], asset_hash)
 
     def get_asset_bundle_url_from_name(self, name):
         asset_hash, _ = self.get_asset_hash_and_key(name)
