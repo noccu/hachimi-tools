@@ -13,8 +13,8 @@ def main():
     for child in Path(atlas_dir).iterdir():
         if child.is_dir():
             bundle_name = "atlas/{0}/{0}".format(child.name)
-            windows_hash = windows_meta.get_asset_hash(bundle_name)
-            android_hash = android_meta.get_asset_hash(bundle_name)
+            windows_hash = windows_meta.get_asset_hash_and_key(bundle_name)
+            android_hash = android_meta.get_asset_hash_and_key(bundle_name)
 
             print(bundle_name)
 

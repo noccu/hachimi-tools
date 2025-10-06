@@ -26,7 +26,7 @@ def main():
             print(base_name)
 
             # Prefer source resource because if flash prefab + src rsrc exists then only src rsrc has the texture
-            (asset_name, asset_hash) = (meta.find_flash_source_resources(base_name) or meta.find_flash_prefab(base_name)) or (None, None)
+            (asset_name, asset_hash, asset_key) = (meta.find_flash_source_resources(base_name) or meta.find_flash_prefab(base_name)) or (None, None)
 
             if not asset_hash:
                 print("[Warn] Asset not found, skipping")

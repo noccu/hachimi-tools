@@ -15,8 +15,8 @@ def main():
     for child in Path(an_dir).iterdir():
         if child.is_dir() and child.name.startswith("as_uMeshParam_fl_"):
             base_name = child.name[len("as_uMeshParam_fl_"):]
-            (asset_name, windows_hash) = windows_meta.find_flash_prefab(base_name) or (None, None)
-            (_, android_hash) = android_meta.find_flash_prefab(base_name) or (None, None)
+            (asset_name, windows_hash, _) = windows_meta.find_flash_prefab(base_name) or (None, None, None)
+            (_, android_hash, _) = android_meta.find_flash_prefab(base_name) or (None, None, None)
 
             print(base_name)
 

@@ -9,7 +9,7 @@ def main():
 
     meta = MetaDb(meta_path)
 
-    asset_hash = meta.get_asset_hash(bundle_name)
+    asset_hash = meta.get_asset_hash_and_key(bundle_name)
     print(asset_hash)
     if asset_hash == None:
         return

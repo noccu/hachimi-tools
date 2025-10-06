@@ -13,8 +13,8 @@ def main():
 
     for meta_path in anim_dir.rglob("*.json"):
         bundle_name = ("uianimation" / meta_path.relative_to(anim_dir)).as_posix()[:-5]
-        windows_hash = windows_meta.get_asset_hash(bundle_name)
-        android_hash = android_meta.get_asset_hash(bundle_name)
+        windows_hash = windows_meta.get_asset_hash_and_key(bundle_name)
+        android_hash = android_meta.get_asset_hash_and_key(bundle_name)
 
         print(bundle_name)
 
