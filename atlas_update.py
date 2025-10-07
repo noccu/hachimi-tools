@@ -1,23 +1,62 @@
 import UnityPy
-from UnityPy.classes import Sprite
-from PIL import Image, ImageDraw
+from PIL import Image
 from unitypy_utils import *
 from pathlib import Path
 from sys import argv
+from meta_db_lib import MetaDb
+from const import GAME_META_FILE
+from decrypt import decrypt_asset_bundle
+import bundle_dl
+import oxipng
+import io
+
+DL_DIR = Path("dl")
+
+
+def get_bundle_data(meta: MetaDb, hash: str) -> bytes:
+    bundle_path = meta.get_asset_bundle_path(hash)
+    bk_path = DL_DIR / hash
+    for p in (bundle_path, bk_path):
+        try:
+            data = p.read_bytes()
+            break
+        except FileNotFoundError:
+            continue
+    else:
+        data = bundle_dl.download(meta, hash)
+        if isinstance(data, int):
+            raise FileNotFoundError
+        bk_path.write_bytes(data)
+    return data
+
 
 def main():
-    (old_atlas_path, old_bundle_path, new_bundle_path, *_) = argv[1:]
-    diff_mode = len(argv) > 4 and argv[4] == "diff"
+    (atlas_ld_root, old_meta_path, atlas_name, *mode) = argv[1:]
+    diff_mode = len(mode) and mode[0] == "diff"
+    old_meta_path = Path(old_meta_path)
 
-    old_env = UnityPy.load(old_bundle_path)
-    new_env = UnityPy.load(new_bundle_path)
+    old_meta = MetaDb.from_unknown(old_meta_path)
+    new_meta = MetaDb(GAME_META_FILE)
+    old_hash, old_key = old_meta.get_asset_hash_and_key(f"atlas/{atlas_name}/{atlas_name}_tex")
+    new_hash, new_key = new_meta.get_asset_hash_and_key(f"atlas/{atlas_name}/{atlas_name}_tex")
+    if old_hash is None or new_hash is None:
+        print(f"A hash was not found. Old: {old_hash}. New: {new_hash}")
+        return
+    else:
+        assert old_key is not None and new_key is not None
+
+    old_bundle_data = decrypt_asset_bundle(get_bundle_data(old_meta, old_hash), old_key)
+    new_bundle_data = decrypt_asset_bundle(get_bundle_data(new_meta, new_hash), new_key)
+
+    old_env = UnityPy.load(old_bundle_data)
+    new_env = UnityPy.load(new_bundle_data)
 
     new_texture = find_first_texture_2d(new_env)
     if not new_texture:
         print("[Error] Texture not found in new bundle (invalid or failed to load asset bundle)")
         return
     new_texture_im = new_texture.image
-    
+
     old_sprites = read_sprites_to_dict(old_env)
     new_sprites = read_sprites_to_dict(new_env)
 
@@ -28,13 +67,14 @@ def main():
     if not new_sprites:
         print("[Error] No sprites found in new bundle")
         return
-    
+
+    old_atlas_path = Path(atlas_ld_root, atlas_name, f"{atlas_name}{'.diff' if diff_mode else ''}.png")
     old_atlas_im = Image.open(old_atlas_path)
-    
+
     width = new_texture.m_Width
     height = new_texture.m_Height
     im = Image.new("RGBA", (width, height), None)
-    for (name, new_data) in new_sprites.items():
+    for name, new_data in new_sprites.items():
         new_rect = new_data.m_Rect
         new_rect_coords = rect_to_coords(new_rect, height)
 
@@ -68,9 +108,9 @@ def main():
         # Paste sprite on new atlas
         im.paste(sprite_im, (new_rect_coords[0], new_rect_coords[1]))
 
-    last_dot_pos = old_atlas_path.rfind(".")
-    out_path = old_atlas_path[:last_dot_pos] + "_new.png"
-    im.save(out_path, "PNG", compress_level=9)
+    img_bytes = io.BytesIO()
+    im.save(img_bytes, "PNG", compress_level=9)
+    old_atlas_path.write_bytes(oxipng.optimize_from_memory(img_bytes.getvalue()))
 
 
 main()
