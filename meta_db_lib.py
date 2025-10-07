@@ -13,7 +13,7 @@ class MetaDb:
         res = self.cur.execute("SELECT n FROM c WHERE n = '//Android' OR n = '//Windows'")
         self.platform = res.fetchone()[0][2:]
 
-    def get_asset_hash_and_key(self, name):
+    def get_asset_hash_and_key(self, name) -> tuple[str, int] | tuple[None, None]:
         res = self.cur.execute("SELECT h, e FROM a WHERE n = '{}'".format(name))
         return (res.fetchone() or (None, None))
 
