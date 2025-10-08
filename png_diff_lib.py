@@ -1,6 +1,8 @@
 from PIL import Image
 import os
 import math
+import oxipng
+import io
 
 def rgb_to_lab(r, g, b):
     # Convert RGB (0-255) to XYZ
@@ -65,7 +67,7 @@ def is_pixel_similar(old_pixel, new_pixel, fuzzy_tresh=0):
     else:
         return old_pixel == new_pixel
 
-def png_diff(old_img, new_img):
+def png_diff(old_img:Image.Image, new_img:Image.Image):
     width = old_img.width
     height = old_img.height
     if width != new_img.width or height != new_img.height:
@@ -97,4 +99,7 @@ def png_diff(old_img, new_img):
                 elif new_pixel == (255, 0, 255, 255):
                     new_pixel = (255, 0, 255, 254)
                 out_pixels[x,y] = new_pixel
-    return out_img
+
+    img_bytes = io.BytesIO()
+    out_img.save(img_bytes, "PNG", compress_level=9)
+    return oxipng.optimize_from_memory(img_bytes.getvalue())

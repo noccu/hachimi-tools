@@ -64,7 +64,7 @@ def main():
 
                         diff_img = png_diff(texture.image, rep_img)
                         diff_path = texture_path.with_suffix(".diff.png")
-                        diff_img.save(diff_path, "PNG", compress_level=9)
+                        diff_path.write_bytes(diff_img)
             else:
                 print("Got status code {}".format(status))
 

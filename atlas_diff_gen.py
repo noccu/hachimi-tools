@@ -1,6 +1,5 @@
 from pathlib import Path
 from unitypy_utils import *
-import json
 from sys import argv
 from const import GAME_META_FILE
 import requests
@@ -54,8 +53,8 @@ def main():
                         continue
 
                     diff_img = png_diff(texture.image, rep_img)
-                    diff_path = child / (child.name + ".diff.png")
-                    diff_img.save(diff_path, "PNG", compress_level=9)
+                    diff_path = child / f"{child.name}.diff.png"
+                    diff_path.write_bytes(diff_img)
                 else:
                     print("Got status code {}".format(status))
 
