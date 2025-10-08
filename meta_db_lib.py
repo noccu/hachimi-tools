@@ -20,6 +20,9 @@ class MetaDb:
             self.db.close()
             raise
 
+    def close(self):
+        self.db.close()
+
     def get_asset_hash_and_key(self, name) -> tuple[str, int] | tuple[None, None]:
         res = self.cur.execute("SELECT h, e FROM a WHERE n = '{}'".format(name))
         return (res.fetchone() or (None, None))
