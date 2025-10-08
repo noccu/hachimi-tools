@@ -1,5 +1,4 @@
 from sys import argv
-import sqlite3
 from pathlib import Path
 import requests
 from meta_db_lib import MetaDb
@@ -18,7 +17,7 @@ def download(meta: MetaDb, asset_hash) -> bytes | int:
 
 def main():
     (output_dir, bundle_name) = argv[1:]
-    meta = MetaDb(const.GAME_META_FILE)
+    meta = MetaDb.from_unknown(const.GAME_META_FILE)
     asset_hash, _ = meta.get_asset_hash_and_key(bundle_name)
     if asset_hash == None:
         return
