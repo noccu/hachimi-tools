@@ -4,18 +4,16 @@ from unitypy_utils import *
 from pathlib import Path
 from sys import argv
 from meta_db_lib import MetaDb
-from const import GAME_META_FILE
+import const
 from decrypt import decrypt_asset_bundle
 import bundle_dl
 import oxipng
 import io
 
-DL_DIR = Path("dl")
-
 
 def get_bundle_data(meta: MetaDb, hash: str) -> bytes:
     bundle_path = meta.get_asset_bundle_path(hash)
-    bk_path = DL_DIR / hash
+    bk_path = const.DL_DIR / hash
     for p in (bundle_path, bk_path):
         try:
             data = p.read_bytes()
@@ -36,7 +34,7 @@ def main():
     old_meta_path = Path(old_meta_path)
 
     old_meta = MetaDb.from_unknown(old_meta_path)
-    new_meta = MetaDb(GAME_META_FILE)
+    new_meta = MetaDb(const.GAME_META_FILE)
     old_hash, old_key = old_meta.get_asset_hash_and_key(f"atlas/{atlas_name}/{atlas_name}_tex")
     new_hash, new_key = new_meta.get_asset_hash_and_key(f"atlas/{atlas_name}/{atlas_name}_tex")
     if old_hash is None or new_hash is None:
