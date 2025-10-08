@@ -6,27 +6,9 @@ from sys import argv
 from meta_db_lib import MetaDb
 import const
 from decrypt import decrypt_asset_bundle
-import bundle_dl
+from bundle_utils import get_bundle_data
 import oxipng
 import io
-
-
-def get_bundle_data(meta: MetaDb, hash: str) -> bytes:
-    bundle_path = meta.get_asset_bundle_path(hash)
-    bk_path = const.DL_DIR / hash
-    for p in (bundle_path, bk_path):
-        try:
-            data = p.read_bytes()
-            break
-        except FileNotFoundError:
-            continue
-    else:
-        data = bundle_dl.download(meta, hash)
-        if isinstance(data, int):
-            raise FileNotFoundError
-        bk_path.write_bytes(data)
-    return data
-
 
 def main():
     (atlas_ld_root, old_meta_path, atlas_name, *mode) = argv[1:]
