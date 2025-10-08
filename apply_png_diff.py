@@ -1,5 +1,9 @@
 from PIL import Image
 from sys import argv
+import io
+import oxipng
+from pathlib import Path
+
 
 def main():
     (orig_path, diff_path, out_path) = argv[1:]
@@ -17,14 +21,16 @@ def main():
     out_pixels = out_img.load()
     for x in range(width):
         for y in range(height):
-            orig_pixel = orig_pixels[x,y]
-            diff_pixel = diff_pixels[x,y]
+            orig_pixel = orig_pixels[x, y]
+            diff_pixel = diff_pixels[x, y]
             if diff_pixel[3] == 0:
-                out_pixels[x,y] = orig_pixel
+                out_pixels[x, y] = orig_pixel
             elif diff_pixel != (255, 0, 255, 255):
-                out_pixels[x,y] = diff_pixel
+                out_pixels[x, y] = diff_pixel
             # else leave the pixel as transparent
+    img_bytes = io.BytesIO()
+    out_img.save(img_bytes, "PNG", compress_level=9)
+    Path(out_path).write_bytes(oxipng.optimize_from_memory(img_bytes.getvalue()))
 
-    out_img.save(out_path, "PNG", compress_level=9)
 
 main()
