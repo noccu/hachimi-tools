@@ -1,11 +1,15 @@
 import UnityPy
 from UnityPy.classes import Texture2D, Sprite
 from UnityPy.math import Rectangle
+from typing import Generator
 
-def find_first_texture_2d(env: UnityPy.Environment) -> Texture2D:
+def find_all_texture_2d(env: UnityPy.Environment) -> Generator[Texture2D]:
     for obj in env.objects:
         if obj.type.name == "Texture2D":
-            return obj.read()
+            yield obj.read()
+
+def find_first_texture_2d(env: UnityPy.Environment):
+    return next(find_all_texture_2d(env))
 
 def read_sprites_to_dict(env: UnityPy.Environment) -> dict[str, Sprite]:
     d = {}

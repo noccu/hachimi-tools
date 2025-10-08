@@ -2,26 +2,42 @@ from decrypt import decrypt_asset_bundle
 from sys import argv
 from meta_db_lib import MetaDb
 from pathlib import Path
-from const import GAME_META_FILE, GAME_ASSET_ROOT
+import const
+import UnityPy
+from unitypy_utils import find_all_texture_2d
+from bundle_utils import get_bundle_data
+
 
 def main():
-    target_asset_path = argv[1]
+    an_dir, target_an_name = argv[1:]
 
-    db = MetaDb(GAME_META_FILE)
-    asset_meta = db.find_flash_source_resources(target_asset_path) or db.find_flash_prefab(target_asset_path)
+    db = MetaDb(const.GAME_META_FILE)
+    asset_meta = db.find_flash_source_resources(target_an_name) or db.find_flash_prefab(target_an_name)
     if asset_meta is None:
-        print(f"Bundle not found: {target_asset_path}")
+        print(f"No matching bundle found for {target_an_name}")
         return
-    asset_name, asset_hash, asset_key = asset_meta
-    bundle_path = GAME_ASSET_ROOT.joinpath(asset_hash[:2], asset_hash)
-    if not bundle_path.is_file():
-        print(f"Bundle {asset_hash} doesn't exist at {bundle_path}")
+    asset_path, asset_hash, asset_key = asset_meta
+
+    try:
+        bundle_data = get_bundle_data(db, asset_hash)
+    except FileNotFoundError as e:
+        print(f"Bundle {asset_hash} not found. {e}")
         return
-    out_path = Path("decrypted_bundles", Path(asset_name).name)
-    out_path.parent.mkdir(exist_ok=True)
-    bundle_data = bundle_path.read_bytes()
-    out_path.write_bytes(decrypt_asset_bundle(bundle_data, asset_key))
-    print(f"Wrote {out_path.name}")
+
+    bundle = UnityPy.load(decrypt_asset_bundle(bundle_data, asset_key))
+    asset_path = Path(asset_path)
+    out_path = Path(an_dir, asset_path.name)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    for an_img in find_all_texture_2d(bundle):
+        img_out_path = out_path.joinpath(an_img.name.removesuffix("_C")).with_suffix(".png")
+        an_img.image.save(img_out_path, "PNG", compress_level=9)
+        print(f"Wrote {img_out_path.name}")
+
+    if "an_img" not in locals():
+        print(f"No texture found in bundle {asset_hash}.")
+    else:
+        print("Done.")
+
 
 if __name__ == "__main__":
     main()
