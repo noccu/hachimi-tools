@@ -13,8 +13,12 @@ class MetaDb:
         self.db = apsw.Connection(uri, apsw.SQLITE_OPEN_URI | apsw.SQLITE_OPEN_READONLY)
         self.cur = self.db.cursor()
 
-        res = self.cur.execute("SELECT n FROM c WHERE n = '//Android' OR n = '//Windows'")
-        self.platform = res.fetchone()[0][2:]
+        try:
+            res = self.cur.execute("SELECT n FROM c WHERE n = '//Android' OR n = '//Windows'")
+            self.platform = res.fetchone()[0][2:]
+        except Exception:
+            self.db.close()
+            raise
 
     def get_asset_hash_and_key(self, name) -> tuple[str, int] | tuple[None, None]:
         res = self.cur.execute("SELECT h, e FROM a WHERE n = '{}'".format(name))
