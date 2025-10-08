@@ -19,7 +19,7 @@ def main():
     (output_dir, bundle_name) = argv[1:]
     meta = MetaDb.from_unknown(const.GAME_META_FILE)
     asset_hash, _ = meta.get_asset_hash_and_key(bundle_name)
-    if asset_hash == None:
+    if asset_hash is None:
         return
     print(f"Found hash: {asset_hash}")
 
