@@ -16,14 +16,18 @@ def download(meta: MetaDb, asset_hash) -> bytes | int:
 
 
 def main():
-    (output_dir, bundle_name) = argv[1:]
+    (bundle_name, *output_dir) = argv[1:]
+    if len(output_dir):
+        output_dir = Path(output_dir[0])
+    else:
+        output_dir = const.DL_DIR
     meta = MetaDb.from_unknown(const.GAME_META_FILE)
     asset_hash, _ = meta.get_asset_hash_and_key(bundle_name)
     if asset_hash is None:
         return
     print(f"Found hash: {asset_hash}")
 
-    path = Path(output_dir, asset_hash)
+    path = output_dir / asset_hash
     path = path.with_name(f"{path.name}_{asset_hash}")
     path.parent.mkdir(parents=True, exist_ok=True)
     asset_data = download(meta, asset_hash)
