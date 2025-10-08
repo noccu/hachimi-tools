@@ -15,6 +15,6 @@ def get_bundle_data(meta: MetaDb, hash: str) -> bytes:
     else:
         data = bundle_dl.download(meta, hash)
         if isinstance(data, int):
-            raise FileNotFoundError
+            raise FileNotFoundError(f"Tried download but got status code {data}.")
         bk_path.write_bytes(data)
     return data
