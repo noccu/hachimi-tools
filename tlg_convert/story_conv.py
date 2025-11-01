@@ -45,6 +45,6 @@ def main():
             hc_dict['text_block_list'] = text_block_list
 
         with open(child, "w", encoding="utf-8", newline='\n') as f:
-            json.dump(hc_dict, f, ensure_ascii=False, indent=4)
+            json.dump(hc_dict, f, ensure_ascii=False, indent=2)
 
 main()

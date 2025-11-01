@@ -43,6 +43,6 @@ def main():
 
             meta_path.parent.mkdir(parents=True, exist_ok=True)
             with open(meta_path, "w", encoding="utf-8", newline='\n') as f:
-                json.dump(meta, f, ensure_ascii=False, indent=4)
+                json.dump(meta, f, ensure_ascii=False, indent=2)
 
 main()

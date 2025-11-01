@@ -24,6 +24,6 @@ def main():
         localize_dict[id_] = tl_content
 
     with open(out_path, 'w', encoding='utf8', newline='\n') as f:
-        json.dump(localize_dict, f, ensure_ascii=False, indent=4)
+        json.dump(localize_dict, f, ensure_ascii=False, indent=2)
 
 main()
