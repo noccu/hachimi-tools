@@ -15,7 +15,7 @@ class MetaDb:
 
         try:
             res = self.cur.execute("SELECT n FROM c WHERE n = '//Android' OR n = '//Windows'")
-            self.platform = res.fetchone()[0][2:]
+            self.platform:str = res.fetchone()[0][2:]
         except Exception:
             self.db.close()
             raise
@@ -41,11 +41,20 @@ class MetaDb:
 
         return self.get_asset_bundle_url(asset_hash)
 
+    def findall_flash_prefab(self, base_name):
+        return self.db.execute(f"SELECT n, h, e FROM a WHERE n LIKE 'uianimation/flash/%/pf_fl_%{base_name}%'")
+
     def find_flash_prefab(self, base_name):
-        return self.cur.execute("SELECT n, h, e FROM a WHERE n LIKE 'uianimation/flash/%/pf_fl_{}'".format(base_name)).fetchone() # (name, hash)
+        return self.findall_flash_prefab(base_name).fetchone()
 
     def find_flash_source_resources(self, base_name):
-        return self.cur.execute("SELECT n, h, e FROM a WHERE n LIKE 'sourceresources/flash/%/fl_{0}/meshparameter/as_umeshparam_fl_{0}'".format(base_name)).fetchone() # (name, hash)
+        return self.cur.execute("SELECT n, h, e FROM a WHERE n LIKE 'sourceresources/flash/%/fl_{0}/meshparameter/as_umeshparam_fl_{0}'".format(base_name)).fetchone()
+
+    def findall_flashcombine_prefab(self, base_name):
+        return self.db.execute(f"SELECT n, h, e FROM a WHERE n LIKE 'uianimation/flashcombine/%/fa_{base_name}%'")
+
+    def find_flashcombine_prefab(self, base_name):
+        return self.findall_flashcombine_prefab(base_name).fetchone()
 
     @classmethod
     def from_unknown(cls, path):
