@@ -30,7 +30,7 @@ def main():
     else:
         db = MetaDb(const.GAME_META_FILE)
         # Path
-        if "/" in asset_hash_or_path:
+        if any(s in asset_hash_or_path for s in ("/", "_")):
             query = f"SELECT n, h, e FROM a WHERE n LIKE '%{asset_hash_or_path}%'"
             asset_meta = db.cur.execute(query).fetchall()
             if asset_meta:
