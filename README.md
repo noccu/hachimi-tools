@@ -2,6 +2,8 @@
 Some miscellaneous tools to help with the translation process. These are all command line tools.
 Arguments in brackets are optional.
 
+Set the env var `UMA_DATA_DIR` to the game's data root if it's not in `LocalLow app data` to use auto-load features where present.
+
 Install dependencies in `requirements.txt` before running these tools.
 
 - `an_extract`: Extract all textures from an an_textures bundle. Arguments: `out_dir, target_an_name`
@@ -21,5 +23,6 @@ Install dependencies in `requirements.txt` before running these tools.
 - `calc_hname.py`: Calculate the hash name for a file from its checksum and name. This uses the calculation method that was used to produce the hash names in the meta DB. Arguments: `(file_path, name)`
 - `bundle_decrypt.py`: Write decrypted bundles to `decrypted_bundles` subdir. Arguments: `path_or_hash, [bundle_key]` (When key is given, path_or_hash is a filepath. Else, if it includes a / or _, it is a unity path and supports multiple targets. Else it is a bundle hash.)
 - `flash_text_extract.py`: Write flash text files. Supports flash and flashcombine automatically. Arguments: `ld_root, target_name` (used as wildcard: pf_fl_\*target_name\*.)
+- `meta_decrypt.py`: Decrypts a meta db for browsing asset metadata. Arguments: `(src, dst)`
 
 Other Python scripts are libraries and do not have any functionality on their own.

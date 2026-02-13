@@ -2,3 +2,4 @@ __pycache__
 .venv
 /dl
 /decrypted_bundles
+/decrypted_metas

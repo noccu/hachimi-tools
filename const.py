@@ -13,3 +13,4 @@ GAME_MASTER_FILE = GAME_ROOT.joinpath("master", "master.mdb")
 
 DL_DIR = Path("dl")
 DECRYPTED_BUNDLES_DIR = Path("decrypted_bundles")
+DECRYPTED_METAS_DIR = Path("decrypted_metas")
