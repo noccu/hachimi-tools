@@ -123,7 +123,13 @@ def main():
             continue
 
         bundle = UnityPy.load(decrypt_asset_bundle(bundle_data, bundle_key))
-        existing_data = utils.read_json(out_path)["data"]["motion_parameter_list"] if update_mode else None
+        if update_mode:
+            fd = utils.read_json(out_path)["data"]
+            if combine_path:
+                fd = fd["an_root"]
+            existing_data = fd["motion_parameter_list"]
+        else:
+            existing_data = None
 
         data = extract_flash(bundle, update_mode, existing_data, target_tx_list)
         if data is None:
