@@ -56,6 +56,10 @@ class MetaDb:
     def find_flashcombine_prefab(self, base_name):
         return self.findall_flashcombine_prefab(base_name).fetchone()
 
+    def find_flash_uparam(self, base_name) -> tuple[str, str, str] | None:
+        return self.db.execute(f"SELECT n, h, e FROM a WHERE n LIKE 'sourceresources/flash/%/as_uparam_fl_%{base_name}%'").fetchone()
+
+
     @classmethod
     def from_unknown(cls, path):
         try:

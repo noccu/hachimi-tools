@@ -107,14 +107,23 @@ def main():
 
     db = MetaDb(const.GAME_META_FILE)
     for bundle_path, bundle_hash, bundle_key in db.findall_flash_prefab(target_name):
+        root_hash = bundle_hash
         base_name = Path(bundle_path).stem[6:]
-        # print(f"Looking for {base_name} combine from {bundle_path}")
+
+        # If there's an fa_ bundle, we must use its path and add an extra an_root key.
+        # Data is still in the fl_ bundle.
         combine_info = db.find_flashcombine_prefab(base_name)
         combine_path = combine_info[0] if combine_info else None
+
         out_path = Path(ld_dir, "assets", combine_path or bundle_path).with_suffix(".json")
         if out_path.exists() and update_mode is None:
             print(f"File already exists, skipping: {out_path}")
             continue
+
+        # If there's a separate as_uparam bundle, that's where the data is.
+        uparam = db.find_flash_uparam(base_name)
+        if uparam:
+            _, bundle_hash, bundle_key = uparam
 
         try:
             bundle_data = get_bundle_data(db, bundle_hash)
@@ -138,7 +147,7 @@ def main():
         if combine_path:
             data = {"an_root": data}
         source_dict = {
-            db.platform.lower(): {"bundle_name": bundle_hash},
+            db.platform.lower(): {"bundle_name": root_hash},
             "data": data,
         }
         utils.write_json(out_path, source_dict)
