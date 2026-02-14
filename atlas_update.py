@@ -17,6 +17,20 @@ def main():
 
     old_meta = MetaDb.from_unknown(old_meta_path)
     new_meta = MetaDb(const.GAME_META_FILE)
+    if atlas_name == "all":
+        print(f"Updating all atlas files in {atlas_ld_root}")
+        root_path = Path(atlas_ld_root)
+        files = root_path.glob("**/*.json")
+        for file in files:
+            diff_file = file.with_suffix(".diff.png")
+            if diff_file.exists():
+                update(atlas_ld_root, old_meta, new_meta, file.stem, True)
+            else:
+                update(atlas_ld_root, old_meta, new_meta, file.stem, False)
+    else:
+        update(atlas_ld_root, old_meta, new_meta, atlas_name, diff_mode)
+
+def update(atlas_ld_root:str, old_meta:MetaDb, new_meta:MetaDb, atlas_name:str, diff_mode:bool):
     old_hash, old_key = old_meta.get_asset_hash_and_key(f"atlas/{atlas_name}/{atlas_name}_tex")
     new_hash, new_key = new_meta.get_asset_hash_and_key(f"atlas/{atlas_name}/{atlas_name}_tex")
     if old_hash is None or new_hash is None:
