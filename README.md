@@ -22,7 +22,7 @@ Install dependencies in `requirements.txt` before running these tools.
 - `uianimation_meta_update.py`: Update existing uianimation meta files. Arguments: `(windows_meta, android_meta, anim_dir)`
 - `calc_hname.py`: Calculate the hash name for a file from its checksum and name. This uses the calculation method that was used to produce the hash names in the meta DB. Arguments: `(file_path, name)`
 - `bundle_decrypt.py`: Write decrypted bundles to `decrypted_bundles` subdir. Arguments: `path_or_hash, [bundle_key]` (When key is given, path_or_hash is a filepath. Else, if it includes a / or _, it is a unity path and supports multiple targets. Else it is a bundle hash.)
-- `flash_text_extract.py`: Write flash text files. Supports flash and flashcombine automatically. Arguments: `ld_root, target_name` (used as wildcard: pf_fl_\*target_name\*.)
-- `meta_decrypt.py`: Decrypts a meta db for browsing asset metadata. Arguments: `(src, dst)`
+- `flash_text_extract.py`: Write flash text files. Supports flash and flashcombine automatically. Arguments: `ld_root, target_name, [update_mode [tx_name_list]]` Name is a wildcard: pf_fl_\*target_name\*. Set mode to `text` to re-extract all text, or `plane` to extract planes using the specified textures, else skips existing.
+- `meta_decrypt.py`: Decrypts a meta db for browsing asset metadata. Arguments: `([src], [dst])`
 
 Other Python scripts are libraries and do not have any functionality on their own.
