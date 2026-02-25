@@ -15,6 +15,7 @@ Install dependencies in `requirements.txt` before running these tools.
 - `an_extract`: Extract all textures from an an_textures bundle. Arguments: `out_dir, target_an_name`
 - `an_diff_gen.py`: Try to generate PNG diffs from all replacement textures in the `an_texture_sets` folder. Since some of these textures cannot be directly mapped back to their uianimation bundle, it will skip files on those occasions. Arguments: `(an_texture_sets_dir, [included_folder_names_only, …])`
 - `an_meta_gen.py`: Try to generate uianimation meta files for each set in `an_texture_sets`. Since some of these textures cannot be directly mapped back to their uianimation bundle, it will skip files on those occasions. Arguments: `(windows_meta, android_meta, ld_assets_dir)`
+- `an_texture_update.py`: Update a translated texture to match a new version by remapping the sprites. Arguments: `(ld_root, old_meta_path, tx_name, [mode])`. Set `mode` to `diff` to update only diffs, otherwise leave empty. Use `all` as the name to update all existing textures.
 
 ### Flash Text
 
