@@ -7,6 +7,7 @@ import UnityPy
 from bundle_utils import get_bundle_data
 import utils
 
+
 def extract_text(motion_param_elem: dict[str, list[dict]], mpi: int, existing_data: dict):
     tpl = motion_param_elem["_textParamList"]
     tpl_out = {}
@@ -33,7 +34,9 @@ def extract_text(motion_param_elem: dict[str, list[dict]], mpi: int, existing_da
     return tpl_out
 
 
-def extract_planes(motion_param_elem: dict[str, list[dict]], mpi: int, existing_data: dict, target_tx_list: set):
+def extract_planes(
+    motion_param_elem: dict[str, list[dict]], mpi: int, existing_data: dict, target_tx_list: set
+):
     ppl = motion_param_elem["_planeParamList"]
     ppl_out = {}
     for ppi, ppl_ele in enumerate(ppl):
@@ -59,7 +62,7 @@ def extract_planes(motion_param_elem: dict[str, list[dict]], mpi: int, existing_
     return ppl_out
 
 
-def extract_flash(bundle: UnityPy.Environment, update_mode, existing_data:dict, target_tx_list):
+def extract_flash(bundle: UnityPy.Environment, update_mode, existing_data: dict, target_tx_list):
     # Assume there is only one asset. (??)
     for asset in bundle.objects:
         if asset.type.name != "MonoBehaviour" or not asset.serialized_type.nodes:
@@ -85,9 +88,73 @@ def extract_flash(bundle: UnityPy.Environment, update_mode, existing_data:dict, 
             if len(ele_out) > 1:
                 mpl_out[mpi] = ele_out
             elif update_mode and str(mpi) in existing_data:
-                    mpl_out[mpi] = existing_data[str(mpi)]
+                mpl_out[mpi] = existing_data[str(mpi)]
         if mpl_out:
             return {"motion_parameter_list": mpl_out}
+
+
+def clean_internal(orig_mp_ele: dict, mp_ele: dict, game_key: str, key: str):
+    if key not in mp_ele:
+        return
+    for tpi, tp_ele in mp_ele[key].items():
+        orig_tp_ele = orig_mp_ele[game_key][int(tpi)]
+
+        try:
+            del tp_ele["_obj_name_"]
+        except KeyError:
+            pass
+        try:
+            if tp_ele["text"] == orig_tp_ele["_text"]:
+                del tp_ele["text"]
+        except KeyError:
+            pass
+
+        try:
+            tp_ele["scale"] = {k: v for k, v in tp_ele["scale"].items() if v != orig_tp_ele["_scale"][k]}
+        except KeyError:
+            pass
+        try:
+            tp_ele["position_offset"] = {
+                k: v for k, v in tp_ele["position_offset"].items() if v != orig_tp_ele["_positionOffset"][k]
+            }
+        except KeyError:
+            pass
+
+
+def clean_flash(bundle: UnityPy.Environment, existing_mpl: dict[str, dict]):
+    # Assume there is only one asset. (??)
+    for asset in bundle.objects:
+        if asset.type.name != "MonoBehaviour" or not asset.serialized_type.nodes:
+            continue
+        tree = asset.read_typetree()
+        mpg: dict = tree.get("_motionParameterGroup")
+        if not mpg:
+            continue
+        mpl: list[dict] = mpg.get("_motionParameterList")
+        if not mpl:
+            continue
+
+        for mpi, mp_ele in existing_mpl.items():
+            try:
+                del mp_ele["_name_"]
+            except KeyError:
+                pass
+            orig_mp_ele = mpl[int(mpi)]
+            clean_internal(orig_mp_ele, mp_ele, "_textParamList", "text_param_list")
+            clean_internal(orig_mp_ele, mp_ele, "_planeParamList", "plane_param_list")
+
+        existing_mpl = clean_dict(existing_mpl)
+        return {"motion_parameter_list": existing_mpl}
+
+
+def clean_dict(d: dict):
+    out = {}
+    for k, v in d.items():
+        if isinstance(v, dict):
+            v = clean_dict(v)
+        if v:
+            out[k] = v
+    return out
 
 
 def main():
@@ -100,7 +167,7 @@ def main():
                 print("No texture name given.")
                 return
         else:
-            assert update_mode == "text"
+            # assert update_mode == "text"
             target_tx_list = None
     except IndexError:
         update_mode = target_tx_list = None
@@ -133,17 +200,28 @@ def main():
 
         bundle = UnityPy.load(decrypt_asset_bundle(bundle_data, bundle_key))
         if update_mode:
-            fd = utils.read_json(out_path)["data"]
+            fd: dict[str, dict[str, dict]] = utils.read_json(out_path)
+            root = fd["data"]
             if combine_path:
-                fd = fd["an_root"]
-            existing_data = fd["motion_parameter_list"]
+                root = fd["an_root"]
+            existing_mpl = root["motion_parameter_list"]
         else:
-            existing_data = None
+            fd = existing_mpl = None
 
-        data = extract_flash(bundle, update_mode, existing_data, target_tx_list)
-        if data is None:
-            print(f"No useful data in {base_name}")
-            continue
+        if update_mode == "clean":
+            win_meta = fd.get("windows")
+            if win_meta is None:
+                print(f"No win meta in {out_path}, skipped.")
+                continue
+            if win_meta["bundle_name"] != bundle_hash:
+                print(f"Bundle hash mismatch for {base_name}, skipped.")
+                continue
+            data = clean_flash(bundle, existing_mpl)
+        else:
+            data = extract_flash(bundle, update_mode, existing_mpl, target_tx_list)
+            if data is None:
+                print(f"No useful data in {base_name}")
+                continue
         if combine_path:
             data = {"an_root": data}
         source_dict = {

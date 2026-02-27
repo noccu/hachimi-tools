@@ -19,7 +19,7 @@ Install dependencies in `requirements.txt` before running these tools.
 
 ### Flash Text
 
-- `flash_text_extract.py`: Write flash text files. Supports flash and flashcombine automatically. Arguments: `ld_root, target_name, [update_mode [tx_name_list]]` Name is a wildcard: pf_fl_\*target_name\*. Set mode to `text` to re-extract all text, or `plane` to extract planes using the specified textures, else skips existing.
+- `flash_text_extract.py`: Write flash text files. Supports flash and flashcombine automatically. Arguments: `ld_root, target_name, [update_mode [tx_name_list]]` Name is a wildcard: pf_fl_\*target_name\*. Set mode to `text` to re-extract all text, `plane` to extract planes using the specified textures, or `clean` to remove unchanged values, else skips existing.
 
 ## Atlas
 
