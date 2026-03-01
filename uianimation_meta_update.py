@@ -1,7 +1,6 @@
 from pathlib import Path
 import json
 from sys import argv
-import sqlite3
 from meta_db_lib import MetaDb
 
 def main():
