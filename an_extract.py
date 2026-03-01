@@ -30,7 +30,7 @@ def main():
     bundle = UnityPy.load(decrypt_asset_bundle(bundle_data, asset_key))
     asset_path = Path(asset_path)
     out_path = Path(out_dir, asset_path.name)
-    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.mkdir(parents=True, exist_ok=True)
     for an_img in find_all_texture_2d(bundle):
         img_out_path = out_path.joinpath(an_img.name.removesuffix("_C")).with_suffix(".png")
         an_img.image.save(img_out_path, "PNG", compress_level=9)
