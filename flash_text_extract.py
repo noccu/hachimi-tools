@@ -158,7 +158,7 @@ def clean_dict(d: dict):
 
 
 def main():
-    ld_dir, target_name, *opts = argv[1:]
+    target_name, *opts = argv[1:]
     try:
         update_mode = opts[0]
         if update_mode == "plane":
@@ -182,7 +182,7 @@ def main():
         combine_info = db.find_flashcombine_prefab(base_name)
         combine_path = combine_info[0] if combine_info else None
 
-        out_path = Path(ld_dir, "assets", combine_path or bundle_path).with_suffix(".json")
+        out_path = utils.get_ld_assets_root(combine_path or bundle_path).with_suffix(".json")
         if out_path.exists() and update_mode is None:
             print(f"File already exists, skipping: {out_path}")
             continue

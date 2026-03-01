@@ -7,15 +7,19 @@ from meta_db_lib import MetaDb
 from png_diff_lib import png_diff
 from utils import load_ignore_list
 from decrypt import decrypt_asset_bundle
-from const import GAME_META_FILE
+import const
 from bundle_utils import get_bundle_data
+import utils
 
 
 def main():
     (an_dir, *target_dirs) = argv[1:]
-    an_dir = Path(an_dir)
+    if an_dir == const.USE_TL_SRC_PATH:
+        an_dir = utils.get_ld_assets_root("an_texture_sets")
+    else:
+        an_dir = Path(an_dir)
 
-    meta = MetaDb(GAME_META_FILE)
+    meta = MetaDb(const.GAME_META_FILE)
     ignore_list = load_ignore_list(an_dir)
 
     for child in an_dir.iterdir():

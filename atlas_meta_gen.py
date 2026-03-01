@@ -1,17 +1,17 @@
-from pathlib import Path
 import json
 from sys import argv
 from meta_db_lib import MetaDb
 import const
+import utils
 
 
 def main():
-    (android_meta, atlas_dir) = argv[1:]
-
+    (android_meta, _) = argv[1:]
+    atlas_dir = utils.get_ld_assets_root("atlas")
     windows_meta = MetaDb(const.GAME_META_FILE)
     android_meta = MetaDb(android_meta)
 
-    for child in Path(atlas_dir).iterdir():
+    for child in atlas_dir.iterdir():
         if child.is_dir():
             bundle_name = "atlas/{0}/{0}".format(child.name)
             windows_hash, _ = windows_meta.get_asset_hash_and_key(bundle_name)

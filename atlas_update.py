@@ -9,11 +9,13 @@ from decrypt import decrypt_asset_bundle
 from bundle_utils import get_bundle_data
 import oxipng
 import io
+import utils
 
 def main():
-    (atlas_ld_root, old_meta_path, atlas_name, *mode) = argv[1:]
+    (old_meta_path, atlas_name, *mode) = argv[1:]
     diff_mode = len(mode) and mode[0] == "diff"
     old_meta_path = Path(old_meta_path)
+    atlas_ld_root = utils.get_ld_assets_root("atlas")
 
     old_meta = MetaDb.from_unknown(old_meta_path)
     new_meta = MetaDb(const.GAME_META_FILE)

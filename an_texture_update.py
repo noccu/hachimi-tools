@@ -7,6 +7,7 @@ import UnityPy
 from PIL import Image
 
 import const
+import utils
 from bundle_utils import get_bundle_data
 from decrypt import decrypt_asset_bundle
 from meta_db_lib import MetaDb
@@ -14,10 +15,10 @@ from unitypy_utils import find_first_texture_2d, parse_texture_sprites, rect_to_
 
 
 def main():
-    (ld_root, old_meta_path, tx_name, *mode) = argv[1:]
+    (old_meta_path, tx_name, *mode) = argv[1:]
     diff_mode = len(mode) and mode[0] == "diff"
     old_meta_path = Path(old_meta_path)
-    tx_root_path = Path(ld_root, "assets", "an_texture_sets")
+    tx_root_path = utils.get_ld_assets_root("an_texture_sets")
 
     old_meta = MetaDb.from_unknown(old_meta_path)
     new_meta = MetaDb(const.GAME_META_FILE)

@@ -3,3 +3,4 @@ __pycache__
 /dl
 /decrypted_bundles
 /decrypted_metas
+config.json

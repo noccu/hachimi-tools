@@ -7,12 +7,16 @@ import UnityPy
 from PIL import Image
 from meta_db_lib import MetaDb
 from png_diff_lib import png_diff
-from utils import load_ignore_list
+from utils import load_ignore_list, get_ld_assets_root
 from decrypt import decrypt_asset_bundle
+import const
 
 def main():
     (atlas_dir, *target_dirs) = argv[1:]
-    atlas_dir = Path(atlas_dir)
+    if atlas_dir == const.USE_TL_SRC_PATH:
+        atlas_dir = get_ld_assets_root("atlas")
+    else:
+        atlas_dir = Path(atlas_dir)
 
     meta = MetaDb(GAME_META_FILE)
     ignore_list = load_ignore_list(atlas_dir)

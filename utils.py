@@ -17,3 +17,33 @@ def write_json(path: Path, data):
 def read_json(path):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
+
+# Config
+
+def open_config():
+    cfg_path = Path("config.json")
+    try:
+        cfg = read_json(cfg_path)
+    except FileNotFoundError:
+        print("No config file found, creating...")
+        cfg = create_config()
+        write_json(cfg_path, cfg)
+    return cfg
+
+
+def create_config():
+    return {"ld_root": input("Set localized_data root folder: ").strip()}
+
+
+def get_ld_root(*add_path):
+    cfg = open_config()
+    try:
+        val = Path(cfg["ld_root"], *add_path)
+        return val
+    except KeyError:
+        print("Error: Set ld_root in config")
+        raise SystemExit
+
+
+def get_ld_assets_root(*add_path):
+    return get_ld_root("assets", *add_path)

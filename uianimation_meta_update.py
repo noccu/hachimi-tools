@@ -1,14 +1,14 @@
-from pathlib import Path
 import json
 from sys import argv
 from meta_db_lib import MetaDb
+import utils
 
 def main():
-    (windows_meta, android_meta, anim_dir) = argv[1:]
+    (windows_meta, android_meta) = argv[1:]
 
     windows_meta = MetaDb(windows_meta)
     android_meta = MetaDb(android_meta)
-    anim_dir = Path(anim_dir)
+    anim_dir = utils.get_ld_assets_root("uianimation")
 
     for meta_path in anim_dir.rglob("*.json"):
         bundle_name = ("uianimation" / meta_path.relative_to(anim_dir)).as_posix()[:-5]

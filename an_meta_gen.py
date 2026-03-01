@@ -1,17 +1,16 @@
-from pathlib import Path
 import json
 from sys import argv
 from meta_db_lib import MetaDb
+import utils
 
 def main():
-    (windows_meta, android_meta, ld_assets_dir) = argv[1:]
+    (windows_meta, android_meta) = argv[1:]
 
     windows_meta = MetaDb(windows_meta)
     android_meta = MetaDb(android_meta)
-    ld_assets_dir = Path(ld_assets_dir)
-    an_dir = ld_assets_dir / "an_texture_sets"
+    ld_assets_dir = utils.get_ld_assets_root()
 
-    for child in Path(an_dir).iterdir():
+    for child in (ld_assets_dir / "an_texture_sets").iterdir():
         if child.is_dir() and child.name.startswith("as_uMeshParam_fl_"):
             base_name = child.name[len("as_uMeshParam_fl_"):]
             (asset_name, windows_hash, _) = windows_meta.find_flash_prefab(base_name) or (None, None, None)
