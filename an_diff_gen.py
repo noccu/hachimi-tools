@@ -45,7 +45,7 @@ def main():
         print(f"Bundle: {asset_hash} at {asset_path}")
 
         try:
-            bundle_data = get_bundle_data(asset_hash)
+            bundle_data = get_bundle_data(meta, asset_hash)
         except FileNotFoundError as e:
             print(f"Couldn't find bundle {asset_hash}. {e}")
             return
