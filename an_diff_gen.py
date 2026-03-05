@@ -14,8 +14,9 @@ import utils
 
 def main():
     (an_dir, *target_dirs) = argv[1:]
+    out_dir = utils.get_ld_assets_root("an_texture_sets")
     if an_dir == const.USE_TL_SRC_PATH:
-        an_dir = utils.get_ld_assets_root("an_texture_sets")
+        an_dir = out_dir
     else:
         an_dir = Path(an_dir)
 
@@ -65,7 +66,10 @@ def main():
                     continue
 
                 diff_img = png_diff(texture.image, rep_img)
-                texture_path.with_suffix(".diff.png").write_bytes(diff_img)
+                base_path = texture_path.relative_to(an_dir)
+                out_path = out_dir.joinpath(base_path.with_suffix(".diff.png"))
+                out_path.parent.mkdir(parents=True, exist_ok=True)
+                out_path.write_bytes(diff_img)
 
 
 main()
