@@ -25,6 +25,7 @@ Install dependencies in `requirements.txt` before running these tools.
 
 ## Atlas
 
+- `atlas_extract.py`: Write atlases matching `target_name` to `out_dir`. Arguments: `out_dir, target_name`.
 - `mattegen.py`: Generate a matte from an AtlasReference texture asset bundle.
 - `atlas_diff_gen.py`: Generate PNG diffs for all replacement textures in `in_dir`. Arguments: `(in_dir, [target_names])`. If given, only atlases matching `target_names` are processed.
 - `atlas_diff_janitor.py`: Try to clean up an atlas PNG diff with garbage pixels, which includes sprite areas with no opaque pixels and areas that are not within any sprite boundaries. Arguments: `(bundle_path, in_img, out_img)`
