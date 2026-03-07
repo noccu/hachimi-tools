@@ -39,8 +39,17 @@ def rgb_to_lab(r, g, b):
 
 def rgba_difference(color1, color2, alpha_weight=1.0):
     # Extract RGBA
-    r1, g1, b1, alpha1 = color1
-    r2, g2, b2, alpha2 = color2
+    r1, g1, b1, *alpha1 = color1
+    r2, g2, b2, *alpha2 = color2
+
+    # Not all images have alpha, and depending on save method, there might be mixed alpha.
+    # If mixed, assume it should be "no alpha".
+    try:
+        alpha1 = alpha1[0]
+        alpha2 = alpha2[0]
+        has_alpha = True
+    except IndexError:
+        has_alpha = False
 
     # Convert RGB to L*a*b* for CIE76 Delta-E
     L1, a1, b1 = rgb_to_lab(r1, g1, b1)
@@ -53,7 +62,7 @@ def rgba_difference(color1, color2, alpha_weight=1.0):
     delta_e = math.sqrt(delta_L**2 + delta_a**2 + delta_b**2)
 
     # Calculate normalized alpha difference (0-255 -> 0-1 scale)
-    delta_alpha = abs(alpha1 - alpha2) / 255
+    delta_alpha = abs(alpha1 - alpha2) / 255  if has_alpha else 0
 
     # Combine color and alpha differences
     # Alpha weight allows tuning the importance of transparency vs. color
