@@ -2,6 +2,7 @@
 Some miscellaneous tools to help with the translation process. These are all command line tools.
 Arguments in brackets are optional.
 
+Set the env var `UMA_GLOBAL` (any value) if working with the Global game version.
 Set the env var `UMA_DATA_DIR` to the game's data root if it's not in `LocalLow app data` to use auto-load features where present.
 
 All non-optional `_dir` (**not** `_path`) args accept the special value `tlsrc`. This will make the tool use the relevant path from the configured translation source. Otherwise, the custom path entered is used. Other tools automatically apply to the configured source.
@@ -35,7 +36,7 @@ Install dependencies in `requirements.txt` before running these tools.
 
 ## Misc
 
-- `meta_decrypt.py`: Decrypts a meta db for browsing asset metadata. Arguments: `([src], [dst])`. By default uses installed game's meta and writes to `decrypted_metas` subdir.
+- `meta_decrypt.py`: Decrypts a meta db for browsing asset metadata. Arguments: `([src], [dst], [--key])`. By default uses installed game's meta and writes to `decrypted_metas` subdir.
 - `bundle_decrypt.py`: Write decrypted bundles to `decrypted_bundles` subdir. Arguments: `path_or_hash, [bundle_key]` (When key is given, `path_or_hash` is a filepath. Else, if it includes a `/` or `_`, it is a unity path and supports multiple targets. Else it is a bundle hash.)
 - `bundle_dl.py`: Download an asset bundle. Resulting file is saved at `{output_dir}/{bundle_name}_{bundle_hash}`. Default output_dir is `dl`. Arguments: `(bundle_name, [output_dir])`
 - `png_diff.py`: Generate a PNG diff between two images. Arguments: `(old_path, new_path, out_path)`
