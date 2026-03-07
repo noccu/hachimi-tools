@@ -41,7 +41,7 @@ def main():
             coords = rect_to_coords(data.m_Rect, height)
             im_draw.rectangle(coords, "#ff00ff")
 
-    out_path = out_dir / f"{atlas_name}_matte.png"
+    out_path = out_dir / atlas_name / f"{atlas_name}_matte.png"
     im.save(out_path, "PNG", compress_level=9)
     print(f"Wrote: {out_path}")
 
