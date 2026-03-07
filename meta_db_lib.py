@@ -1,13 +1,15 @@
 import apsw
-from const import GAME_ASSET_ROOT
+from const import GAME_ASSET_ROOT, IS_GLOBAL
 
 DB_KEY = "9c2bab97bcf8c0c4f1a9ea7881a213f6c9ebf9d8d4c6a8e43ce5a259bde7e9fd"
+DB_KEY_GLOBAL = "A713A5C79DBC9497C0A88669"
 
 
 class MetaDb:
-    def __init__(self, path, encrypted=True):
+    def __init__(self, path, encrypted=True, key=None):
         if encrypted:
-            uri = f"file:{str(path)}?hexkey={DB_KEY}"
+            key = key or (DB_KEY_GLOBAL if IS_GLOBAL else DB_KEY)
+            uri = f"file:{str(path)}?hexkey={key}"
         else:
             uri = f"file:{str(path)}"
         self.db = apsw.Connection(uri, apsw.SQLITE_OPEN_URI | apsw.SQLITE_OPEN_READONLY)
