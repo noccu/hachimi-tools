@@ -20,6 +20,10 @@ Install dependencies in `requirements.txt` before running these tools.
 - `an_meta_gen.py`: Try to generate uianimation meta files for each set in `an_texture_sets`. Since some of these textures cannot be directly mapped back to their uianimation bundle, it will skip files on those occasions. Arguments: `(windows_meta, android_meta)`
 - `an_texture_update.py`: Update a translated texture to match a new version by remapping the sprites. Arguments: `(old_meta_path, tx_name, [mode])`. Set `mode` to `diff` to update only diffs, otherwise leave empty. Use `all` as the name to update all existing textures.
 
+### Comics
+- `comic_extract.py`: Writes comics matching `target_name` to `out_dir`. Names are char IDs. A correctly scaled version is also written to base editing on, but final editing output should use the original for diff reasons. Arguments: `out_dir, [target_name]`
+- `comic_diff_gen.py.py`: Generate PNG diffs for all replacement textures matching `target_name` in `in_dir`. Names are char IDs. A thumb version is also written. Correct scaling is done automatically. Arguments: `in_dir, fuzzy_thresh, [target_name]`. The `fuzzy_thresh` arg controls allowed variance to optimize suboptimal/rescaled diffs. It is automatically set to 0 if resolution matches, assuming proper editing procedure.
+
 ### Flash Text
 
 - `flash_text_extract.py`: Write flash text files. Supports flash and flashcombine automatically. Arguments: `target_name, [update_mode [tx_name_list]]` Name is a wildcard: pf_fl_\*target_name\*. Set mode to `text` to re-extract all text, `plane` to extract planes using the specified textures, or `clean` to remove unchanged values, else skips existing.

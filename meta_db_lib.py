@@ -67,6 +67,12 @@ class MetaDb:
     def find_atlas(self, base_name):
         return self.findall_atlas(base_name).fetchone()
 
+    def findall_comic(self, base_name):
+        return self.db.execute(f"SELECT n, h, e FROM a WHERE n LIKE 'outgame/comic/tex_comic_{base_name}%'")
+
+    def find_comic(self, base_name)  -> tuple[str, str, str] | None:
+        return self.findall_comic(base_name).fetchone()
+
     @classmethod
     def from_unknown(cls, path):
         try:

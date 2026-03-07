@@ -109,6 +109,9 @@ def png_diff(old_img: Image.Image, new_img: Image.Image, fuzzy_tresh: float = 0.
                     new_pixel = (255, 0, 255, 254)
                 out_pixels[x,y] = new_pixel
 
+    return get_optimized_png(out_img)
+
+def get_optimized_png(img: Image.Image):
     img_bytes = io.BytesIO()
-    out_img.save(img_bytes, "PNG", compress_level=9)
+    img.save(img_bytes, "PNG", compress_level=9)
     return oxipng.optimize_from_memory(img_bytes.getvalue())
