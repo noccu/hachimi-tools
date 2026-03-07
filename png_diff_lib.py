@@ -67,7 +67,7 @@ def is_pixel_similar(old_pixel, new_pixel, fuzzy_tresh=0):
     else:
         return old_pixel == new_pixel
 
-def png_diff(old_img:Image.Image, new_img:Image.Image):
+def png_diff(old_img: Image.Image, new_img: Image.Image, fuzzy_tresh: float = 0.0):
     width = old_img.width
     height = old_img.height
     if width != new_img.width or height != new_img.height:
@@ -80,7 +80,7 @@ def png_diff(old_img:Image.Image, new_img:Image.Image):
     out_img = Image.new("RGBA", (width, height), None)
     out_pixels = out_img.load()
 
-    fuzzy_tresh = os.environ.get('PNG_DIFF_FUZZY', 0)
+    fuzzy_tresh = fuzzy_tresh or os.environ.get('PNG_DIFF_FUZZY', 0)
     if fuzzy_tresh:
         try:
             fuzzy_tresh = float(fuzzy_tresh)
