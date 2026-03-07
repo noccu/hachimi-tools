@@ -11,7 +11,7 @@ def find_all_texture_2d(env: UnityPy.Environment) -> Generator[Texture2D]:
 
 
 def find_first_texture_2d(env: UnityPy.Environment):
-    return next(find_all_texture_2d(env))
+    return next(find_all_texture_2d(env), None)
 
 
 def read_sprites_to_dict(env: UnityPy.Environment) -> dict[str, Sprite]:
