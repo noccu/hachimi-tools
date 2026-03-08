@@ -53,7 +53,7 @@ class MetaDb:
         return self.cur.execute("SELECT n, h, e FROM a WHERE n LIKE 'sourceresources/flash/%/fl_{0}/meshparameter/as_umeshparam_fl_{0}'".format(base_name)).fetchone()
 
     def findall_flashcombine_prefab(self, base_name):
-        return self.db.execute(f"SELECT n, h, e FROM a WHERE n LIKE 'uianimation/flashcombine/%/fa_{base_name}%'")
+        return self.db.execute(f"SELECT n, h, e FROM a WHERE n LIKE 'uianimation/flashcombine/%/fa_%{base_name}%'")
 
     def find_flashcombine_prefab(self, base_name):
         return self.findall_flashcombine_prefab(base_name).fetchone()
