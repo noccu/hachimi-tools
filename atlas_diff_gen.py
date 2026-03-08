@@ -13,8 +13,9 @@ from bundle_utils import get_bundle_data
 
 def main():
     (atlas_dir, *target_dirs) = argv[1:]
+    out_dir = get_ld_assets_root("atlas")
     if atlas_dir == const.USE_TL_SRC_PATH:
-        atlas_dir = get_ld_assets_root("atlas")
+        atlas_dir = out_dir
     else:
         atlas_dir = Path(atlas_dir)
 
@@ -53,7 +54,8 @@ def main():
                     continue
 
                 diff_img = png_diff(texture.image, rep_img)
-                diff_path = child / f"{child.name}.diff.png"
+                diff_path = out_dir / child.name / f"{child.name}.diff.png"
+                diff_path.parent.mkdir(parents=True, exist_ok=True)
                 diff_path.write_bytes(diff_img)
 
 main()
