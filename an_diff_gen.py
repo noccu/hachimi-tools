@@ -24,8 +24,7 @@ def main():
     ignore_list = load_ignore_list(an_dir)
 
     for child in an_dir.iterdir():
-        included = child.name in target_dirs if len(target_dirs) else True
-        if not child.is_dir() or not included or not child.name.startswith("as_uMeshParam_fl_"):
+        if not any(name in child.name for name in target_dirs):
             continue
         png_files = list(child.glob("*.png"))
         if len(png_files) == 0 or all(path.name.endswith(".diff.png") for path in png_files):
