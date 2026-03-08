@@ -203,7 +203,7 @@ def main():
             fd: dict[str, dict[str, dict]] = utils.read_json(out_path)
             root = fd["data"]
             if combine_path:
-                root = fd["an_root"]
+                root = root["an_root"]
             existing_mpl = root["motion_parameter_list"]
         else:
             fd = existing_mpl = None
