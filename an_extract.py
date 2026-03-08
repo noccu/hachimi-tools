@@ -1,12 +1,14 @@
-from decrypt import decrypt_asset_bundle
-from sys import argv
-from meta_db_lib import MetaDb
 from pathlib import Path
-import const
+from sys import argv
+
 import UnityPy
-from unitypy_utils import find_all_texture_2d
-from bundle_utils import get_bundle_data
+
+import const
 import utils
+from bundle_utils import get_bundle_data
+from decrypt import decrypt_asset_bundle
+from meta_db_lib import MetaDb
+from unitypy_utils import find_all_texture_2d
 
 
 def main():
@@ -15,31 +17,30 @@ def main():
         out_dir = utils.get_ld_assets_root("an_texture_sets")
 
     db = MetaDb(const.GAME_META_FILE)
-    asset_meta = db.find_flash_source_resources(target_an_name) or db.find_flash_prefab(target_an_name)
-    if asset_meta is None:
-        print(f"No matching bundle found for {target_an_name}")
-        return
-    asset_path, asset_hash, asset_key = asset_meta
+    for asset_path, asset_hash, asset_key in db.findall_flash_assets(target_an_name):
+        try:
+            bundle_data = get_bundle_data(db, asset_hash)
+        except FileNotFoundError as e:
+            print(f"Bundle {asset_hash} not found.\n{e}")
+            return
 
-    try:
-        bundle_data = get_bundle_data(db, asset_hash)
-    except FileNotFoundError as e:
-        print(f"Bundle {asset_hash} not found. {e}")
-        return
+        asset_path = Path(asset_path)
+        base_name = asset_path.name[asset_path.name.find("fl_") + 3:]
+        print(f"Found: {base_name}")
 
-    bundle = UnityPy.load(decrypt_asset_bundle(bundle_data, asset_key))
-    asset_path = Path(asset_path)
-    out_path = Path(out_dir, asset_path.name)
-    out_path.mkdir(parents=True, exist_ok=True)
-    for an_img in find_all_texture_2d(bundle):
-        img_out_path = out_path.joinpath(an_img.name.removesuffix("_C")).with_suffix(".png")
-        an_img.image.save(img_out_path, "PNG", compress_level=9)
-        print(f"Wrote {img_out_path.name}")
+        bundle = UnityPy.load(decrypt_asset_bundle(bundle_data, asset_key))
+        # Game/Hachimi always looks for this name.
+        out_path = Path(out_dir, f"as_uMeshParam_fl_{base_name}")
+        tx_count = 0
+        for an_img in find_all_texture_2d(bundle):
+            tx_count += 1
+            img_out_path = (out_path / an_img.name.removesuffix("_C")).with_suffix(".png")
+            out_path.mkdir(parents=True, exist_ok=True)  # Only create dir if textures found.
+            an_img.image.save(img_out_path, "PNG", compress_level=9)
+            print(f"Wrote {img_out_path.name}")
 
-    if "an_img" not in locals():
-        print(f"No texture found in bundle {asset_hash}.")
-    else:
-        print("Done.")
+        if tx_count == 0:
+            print(f"No texture found in {asset_path}.")
 
 
 if __name__ == "__main__":

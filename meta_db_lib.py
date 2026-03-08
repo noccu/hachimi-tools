@@ -55,6 +55,17 @@ class MetaDb:
     def find_flash_source_resources(self, base_name) -> tuple[str, str, str] | None:
         return self.findall_flash_source_resources(base_name).fetchone()
 
+    # Combines the above two as they're usually used together.
+    def findall_flash_assets(self, base_name):
+        return self.db.execute(
+            f"SELECT n, h, e FROM a WHERE \
+            n LIKE 'uianimation/flash/%/pf_fl_%{base_name}%' \
+            OR n LIKE 'sourceresources/flash/%/fl_%{base_name}%/meshparameter/as_umeshparam_fl_%{base_name}%'"
+        )
+
+    def find_flash_asset(self, base_name):
+        return self.findall_flash_assets(base_name).fetchone()
+
     def findall_flashcombine_prefab(self, base_name):
         return self.db.execute(f"SELECT n, h, e FROM a WHERE n LIKE 'uianimation/flashcombine/%/fa_%{base_name}%'")
 
