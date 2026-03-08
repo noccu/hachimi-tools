@@ -64,7 +64,7 @@ class MetaDb:
     def findall_atlas(self, base_name):
         return self.db.execute(f"SELECT n, h, e FROM a WHERE m = 'atlas' AND n LIKE 'atlas/%{base_name}%_tex'")
 
-    def find_atlas(self, base_name):
+    def find_atlas(self, base_name) -> tuple[str, str, str] | None:
         return self.findall_atlas(base_name).fetchone()
 
     def findall_comic(self, base_name):

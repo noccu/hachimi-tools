@@ -19,10 +19,9 @@ def main():
         out_dir = utils.get_ld_assets_root("atlas")
     else:
         out_dir = Path(out_dir)
-        out_dir.mkdir(parents=True, exist_ok=True)
     meta = MetaDb(const.GAME_META_FILE)
 
-    hash, key = meta.get_asset_hash_and_key(f"atlas/{atlas_name}/{atlas_name}_tex")
+    asset_path, hash, key = meta.find_atlas(atlas_name)
     bundle_data = decrypt_asset_bundle(get_bundle_data(meta, hash), key)
     env = UnityPy.load(bundle_data)
 
@@ -41,7 +40,9 @@ def main():
             coords = rect_to_coords(data.m_Rect, height)
             im_draw.rectangle(coords, "#ff00ff")
 
-    out_path = out_dir / atlas_name / f"{atlas_name}_matte.png"
+    base_name = Path(asset_path).name.removesuffix("_tex")
+    out_path = out_dir / base_name / f"{base_name}_matte.png"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     im.save(out_path, "PNG", compress_level=9)
     print(f"Wrote: {out_path}")
 
