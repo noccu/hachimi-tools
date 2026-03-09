@@ -110,13 +110,13 @@ def clean_internal(orig_mp_ele: dict, mp_ele: dict, game_key: str, key: str):
             pass
 
         try:
-            tp_ele["scale"] = {k: v for k, v in tp_ele["scale"].items() if v != orig_tp_ele["_scale"][k]}
+            if all(v == orig_tp_ele["_scale"][k] for k, v in tp_ele["scale"].items()):
+                del tp_ele["scale"]
         except KeyError:
             pass
         try:
-            tp_ele["position_offset"] = {
-                k: v for k, v in tp_ele["position_offset"].items() if v != orig_tp_ele["_positionOffset"][k]
-            }
+            if all(v == orig_tp_ele["_positionOffset"][k] for k, v in tp_ele["position_offset"].items()):
+                del tp_ele["position_offset"]
         except KeyError:
             pass
 
@@ -152,8 +152,9 @@ def clean_dict(d: dict):
     for k, v in d.items():
         if isinstance(v, dict):
             v = clean_dict(v)
-        if v:
-            out[k] = v
+            if len(v) == 0:
+                continue
+        out[k] = v
     return out
 
 
